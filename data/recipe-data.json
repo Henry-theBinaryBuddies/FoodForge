@@ -1,0 +1,12 @@
+{
+  "appName": "Food Forge",
+  "topic": "Find recipes based on ingredients on hand",
+  "description": "Find recipes based on ingredients on hand",
+  "recipes": [
+    {
+      "title": "spaghetti",
+      "ingredients": [],
+      "description": "Sauce: Brown 1 lb of ground beef or Italian sausage with diced onions and garlic, then simmer with crushed tomatoes, tomato paste, and Italian seasoning before tossing with al dente spaghetti.\n"
+    }
+  ]
+}
