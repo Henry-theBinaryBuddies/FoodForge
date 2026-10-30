@@ -1,24 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include("partials/header") %>
-<script src="/js/carousel.js" defer></script>
+<script src="/js/carousel.js"></script>
+<script src="/css/style.css"></script>
 
-<body class="bg-white text-black text-center min-h-screen">
+<body class="bg-white text-black  min-h-screen">
 <%- include("partials/nav") %>
-    <main class="max-w-5xl mx-auto px-6 py-10">
-        <% data.ingredients.forEach((category) => { %>
-            <section class ="ingredient-section mb-10">
-                    <h1 class = "text-2xl font-bold"><%= category.name %></h1>
-                    <p><%= category.description %></p>
+    <div class="bg-[url('/images/background.png')] bg-cover rounded-xl max-w-5xl mx-auto px-6 py-4">
+        <h1 class="text-3xl font-bold">Select Ingredients:</h1>
+            <p class="text-gray-500">Choose What You Have On Hand</p>
 
-                    <div class ="flex gap-2 mb-3">
-                        <button type = "button" class="carousel-prev">Previous</button>
-                        <button type = "button" class="carousel-next">Next</button>
-                    </div>
+
+        <% data.ingredients.forEach((category) => { %>
+
+            <section class="ingredient-section mb-10">
+
+                <h1 class="text-2xl font-bold">
+                    <%= category.name %>
+                </h1>
+
+                <p class="text-gray-500 mb-4">
+                    <%= category.description %>
+                </p>
+
+                <div class="flex gap-2 mb-3">
+                    <button type="button" class="carousel-prev">Previous</button>
+                    <button type="button" class="carousel-next">Next</button>
+                </div>
 
                 <div class="ingredient-carousel flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth">
+
                     <% category.items.forEach((item) => { %>
-                        <div class="relative shrink-0 w-40 sm:w-52 aspect-square snap-start rounded-xl overflow-hidden">
+
+                        <button class="relative shrink-0 w-40 sm:w-52 aspect-square snap-start rounded-xl overflow-hidden">
 
                             <img
                                 src="<%= item.img %>"
@@ -26,23 +40,23 @@
                                 class="w-full h-full object-cover"
                             >
 
-                            <div class = "absolute bottom-0 left-0 w-full bg-black/60 p-3 text-center">
-                                <span class = "text-white font-semibold">
+                            <div class="absolute bottom-0 left-0 w-full bg-black/60 p-3 text-center">
+                                <span class="text-white font-semibold">
                                     <%= item.name %>
                                 </span>
                             </div>
+
+                        </button>
+
                     <% }); %>
+
                 </div>
+
             </section>
+
         <% }); %>
 
     </main>
-
-Skin-changers lasted Luin honest peak net. Catch offering movement rascal intent mighty Proudfeet. Earth foresight
-precautions. Tricksed Dale disturb hardly dungeon watchful mingled army everyone lights denying dreamed.
-Turning Envenom usual stings. Bidden taters assure westward Elf-maiden enter tunnels particularly? Gandalf's
-death was not in vain. Nor would he have you give up hope. Remembrance pillaged grandfather by bright bred peoples
- nature banished Bagginses dawn. Friends deadliest Fenmarch dear answerable.
 <%- include("partials/footer") %>
 </body>
 </html>

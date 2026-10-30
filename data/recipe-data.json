@@ -22,7 +22,8 @@
         { "name": "Tofu", "img": "/images/tofu.png" },
         { "name": "Beef", "img": "/images/beef.png" },
         { "name": "Fish", "img": "/images/fish.png" },
-        { "name": "Pork", "img": "/images/pork.png" }
+        { "name": "Pork", "img": "/images/pork.png" },
+        { "name": "Beans", "img": "/images/beans.png" }
       ]
     },
     {

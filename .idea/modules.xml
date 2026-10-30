@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/FoodForge.iml" filepath="$PROJECT_DIR$/.idea/FoodForge.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FoodForge.iml" filepath="$PROJECT_DIR$/FoodForge.iml" />
     </modules>
   </component>
 </project>

@@ -1,4 +1,5 @@
 document.querySelectorAll(".ingredient-section").forEach((section) => {
+
     const carousel = section.querySelector(".ingredient-carousel");
     const previous = section.querySelector(".carousel-prev");
     const next = section.querySelector(".carousel-next");
@@ -16,4 +17,5 @@ document.querySelectorAll(".ingredient-section").forEach((section) => {
             behavior: "smooth"
         });
     });
+
 });
