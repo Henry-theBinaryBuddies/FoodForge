@@ -1,25 +1,42 @@
 import ingredientData from "../data/ingredient-data.json";
-import IngredientCard from "../components/IngredientCard.jsx";
+import IngredientSection from "../components/IngredientSection.jsx";
+import { useState } from 'react';
+
 import './Home.css';
 
 function Home() {
+
+    const [selectedIngredients, setSelectedIngredients] = useState([]);
+
+    function toggleIngredient(name) {
+        setSelectedIngredients((previous) =>
+            previous.includes(name)
+                ? previous.filter((ingredient) => ingredient !== name)
+                : [...previous, name]
+        );
+    }
     return (
-        <>
+        <main className="home">
+
             <h1>Select Ingredients</h1>
             <p>Choose what you have on hand</p>
+            <p>Selected: {selectedIngredients.join(", ")}</p>
+            <button type="button"
+                onClick={() => setSelectedIngredients([])}
+            >
+                Clear Selection
+            </button>
 
             {ingredientData.ingredients.map((category) => (
-                <section key={category.name}>
-                    <h2>{category.name}</h2>
-                    <div className="ingredient-carousel">
-                    {category.items.map((item) => (
-                        <IngredientCard key={item.name} name={item.name} img={item.img}/>
-                    ))}
-                    </div>
-                </section>
+                <IngredientSection
+                    key={category.name}
+                    category={category}
+                    selectedIngredients={selectedIngredients}
+                    onToggle={toggleIngredient}/>
             ))}
-        </>
+        </main>
     );
+
 }
 
 
