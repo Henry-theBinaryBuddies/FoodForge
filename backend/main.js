@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 
-const recipeData = require("../data/recipe-data.json");
+const recipeData = require("../frontend/src/data/ingredient-data.json");
 
 const app = express();
 const PORT = 4000;
