@@ -76,5 +76,91 @@
         { "name": "Watermelon", "img": "/images/watermelon.png" }
       ]
     }
+  ],
+  "macros":  [
+    {
+      "name": "Calories",
+      "toggles": [
+        {
+          "name": "Low",
+          "description": "Under 400",
+          "img": ""
+        },
+        {
+          "name": "Medium",
+          "description": "400-599",
+          "img": ""
+        },
+        {
+          "name": "High",
+          "description": "600-799",
+          "img": ""
+        },
+        {
+          "name": "Very High",
+          "description": "800+",
+          "img": ""
+        }
+      ]
+    },
+    {
+      "name": "Protein",
+      "toggles": [
+        {"name": "Low",
+          "description": "Less than 20g",
+          "img": ""
+        },
+        {"name": "Standard",
+          "description": "20 to 34g",
+          "img": ""
+        },
+        {"name": "High",
+          "description": "35 to 49g",
+          "img": ""
+        },
+        {"name": "Ultra",
+          "description": "50g+",
+          "img": ""
+        }
+      ]
+    },
+    {
+      "name": "Fat",
+      "toggles": [
+        {"name": "Low",
+          "description": "Less than 25% of calories",
+          "img": ""
+        },
+        {"name": "Balanced",
+          "description": "25 to 40% of calories",
+          "img": ""
+        },
+        {"name": "High",
+          "description": "Greater than 40% of calories",
+          "img": ""
+        }
+      ]
+    },
+    {
+      "name": "Carbohydrates",
+      "toggles": [
+        {"name": "No Carbs",
+          "description": "Less than 5g",
+          "img": ""
+        },
+        {"name": "Low Carb",
+          "description": "5 to 30g",
+          "img": ""
+        },
+        {"name": "Moderate",
+          "description": "30 to 75g",
+          "img": ""
+        },
+        {"name": "High",
+          "description": "75g+",
+          "img": ""
+        }
+      ]
+    }
   ]
 }
