@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors({ origin: "http://localhost:4000" }));
 app.use(express.json());
-app.use("/api/recipes", recipesRouter);
+app.use("/api/recipe", recipesRouter);
 
 app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
