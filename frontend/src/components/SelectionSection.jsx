@@ -1,8 +1,8 @@
-import IngredientCard from "../components/IngredientCard.jsx";
-import { useRef, useLayoutEffect } from 'react';
+import SelectionCard from "./SelectionCard.jsx";
+import { useRef } from 'react';
 
 
-function IngredientSection({category, selectedIngredients, onToggle}) {
+function SelectionSection({category, items, selectedNames, onToggle}) {
     const carouselRef = useRef(null);
 
     return (
@@ -18,13 +18,14 @@ function IngredientSection({category, selectedIngredients, onToggle}) {
         >
             &lt;
         </button>
-        <div className="ingredient-carousel" ref={carouselRef}>
-            {category.items.map((item, index) => (
-                <IngredientCard
-                    key={'${item.name}-${index}'}
+        <div className="carousel" ref={carouselRef}>
+            {items.map((item) => (
+                <SelectionCard
+                    key={item.name}
                     name={item.name}
                     img={item.img}
-                    selected={selectedIngredients.includes(item.name)}
+                    description={item.description}
+                    selected={selectedNames.includes(item.name)}
                     onToggle={onToggle}
                 />
             ))}
@@ -44,4 +45,4 @@ function IngredientSection({category, selectedIngredients, onToggle}) {
 
 
 
-export default IngredientSection;
+export default SelectionSection;

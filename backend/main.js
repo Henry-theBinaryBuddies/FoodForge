@@ -49,9 +49,9 @@ app.post("/recipe", function (req, res) {
     }
 
     //Throw error if array is empty
-    if (ingredients.length === 0) {
+    if (ingredients.length < 2) {
         return res.status(400).json({
-            error: "Select at least one ingredient."
+            error: "Select at least two ingredients."
         })
     }
 
