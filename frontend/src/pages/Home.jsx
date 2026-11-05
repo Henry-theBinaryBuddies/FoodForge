@@ -55,20 +55,6 @@ function Home() {
 
             <h1>Select Ingredients</h1>
             <p>Choose what you have on hand</p>
-            <p>Selected: {selectedIngredients.join(", ")}</p>
-            <button type="button"
-                onClick={() => setSelectedIngredients([])}
-            >
-                Clear Selection
-            </button>
-            <br />
-            <button type="button"
-                    onClick={sendIngredients}
-                    disabled={isSending}
-            >
-                {isSending ? "Sending..." : "Find Recipes"}
-            </button>
-            <p role="status">{message}</p>
 
             {ingredientData.ingredients.map((category) => (
                 <IngredientSection
@@ -77,6 +63,31 @@ function Home() {
                     selectedIngredients={selectedIngredients}
                     onToggle={toggleIngredient}/>
             ))}
+
+            <div className="selectedParams">
+                <p>Selected: {selectedIngredients.join(", ")}</p>
+                <p
+                    className="selectedParams-status"
+                    role="status"
+                >{message}</p>
+            </div>
+
+            <button
+                className="selectedParams-button-left"
+                type="button"
+                onClick={() => setSelectedIngredients([])}
+            >
+                Clear Selection
+            </button>
+            <button
+                className="selectedParams-button-right"
+                type="button"
+                onClick={sendIngredients}
+                disabled={isSending}
+            >
+                {isSending ? "Sending..." : "Next: Macros"}
+            </button>
+
         </main>
     );
 

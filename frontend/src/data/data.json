@@ -144,7 +144,7 @@
     {
       "name": "Carbohydrates",
       "toggles": [
-        {"name": "No Carbs",
+        {"name": "No Carb",
           "description": "Less than 5g",
           "img": ""
         },
@@ -162,5 +162,122 @@
         }
       ]
     }
+  ],
+  "Food Preferences": [
+    {
+      "name": "Cuisine",
+      "toggles": [
+        {
+          "name": "Italian",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Mexican",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Chinese",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Indian",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "American",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Mediterranean",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Thai",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Japanese",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "BBQ",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "African",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "French",
+          "description": "",
+          "img": ""
+        }
+      ]
+    },
+    {
+      "name": "Diet",
+      "toggles": [
+        {
+          "name": "Vegetarian",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Vegan",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Gluten-Free",
+          "description": "",
+          "img": ""
+        }
+      ]
+    },
+    {
+    "name": "Flavor Profile",
+    "toggles": [
+      {
+        "name": "Mild",
+        "description": "",
+        "img": ""
+      },
+      {
+        "name": "Spicy",
+        "description": "",
+        "img": ""
+      },
+      {
+        "name": "Savory",
+        "description": "",
+        "img": ""
+      },
+      {
+        "name": "Sweet",
+        "description": "",
+        "img": ""
+      },
+      {
+        "name": "Tangy",
+        "description": "",
+        "img": ""
+      },
+      {
+        "name": "Umami",
+        "description": "",
+        "img": ""
+      }
+    ]
+  }
   ]
 }

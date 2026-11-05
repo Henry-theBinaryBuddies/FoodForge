@@ -1,32 +1,27 @@
 import IngredientCard from "../components/IngredientCard.jsx";
-import { useRef } from 'react';
+import { useRef, useLayoutEffect } from 'react';
 
 
 function IngredientSection({category, selectedIngredients, onToggle}) {
     const carouselRef = useRef(null);
+
     return (
-    <section>
+    <section className="carousel-wrapper">
         <h2>{category.name}</h2>
+        <h3>{category.description}</h3>
         <button
+            className="carousel-arrow carousel-arrow-left"
             onClick={() => carouselRef.current?.scrollBy({
                 left: -carouselRef.current.clientWidth * 0.8,
                 behavior: "smooth"
             })}
         >
-            &larr;
-        </button>
-        <button
-            onClick={() => carouselRef.current?.scrollBy({
-                left: carouselRef.current.clientWidth * 0.8,
-                behavior: "smooth"
-            })}
-        >
-            &rarr;
+            &lt;
         </button>
         <div className="ingredient-carousel" ref={carouselRef}>
-            {category.items.map((item) => (
+            {category.items.map((item, index) => (
                 <IngredientCard
-                    key={item.name}
+                    key={'${item.name}-${index}'}
                     name={item.name}
                     img={item.img}
                     selected={selectedIngredients.includes(item.name)}
@@ -34,6 +29,15 @@ function IngredientSection({category, selectedIngredients, onToggle}) {
                 />
             ))}
         </div>
+        <button
+            className="carousel-arrow carousel-arrow-right"
+            onClick={() => carouselRef.current?.scrollBy({
+                left: carouselRef.current.clientWidth * 0.8,
+                behavior: "smooth",
+            })}
+        >
+            &gt;
+        </button>
     </section>
     );
 }
