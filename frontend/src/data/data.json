@@ -1,0 +1,283 @@
+{
+  "appName": "Food Forge",
+  "topic": "Find recipes based on ingredients on hand",
+  "description": "Find recipes based on ingredients on hand",
+  "ingredients": [
+    {
+      "name": "Protein",
+      "description": "Meat, Beans, Nuts",
+      "items": [
+        { "name": "Eggs", "img": "/images/egg.png" },
+        { "name": "Tuna", "img": "/images/tuna.png" },
+        { "name": "Hamburger", "img": "/images/hamburger.png" },
+        { "name": "Nuts", "img": "/images/nuts.png" },
+        { "name": "Chicken", "img": "/images/chicken.png" },
+        { "name": "Tofu", "img": "/images/tofu.png" },
+        { "name": "Beef", "img": "/images/beef.png" },
+        { "name": "Fish", "img": "/images/fish.png" },
+        { "name": "Pork", "img": "/images/pork.png" },
+        { "name": "Beans", "img": "/images/beans.png" }
+      ]
+    },
+    {
+      "name": "Vegetables",
+      "description": "Leafy Greens, Starchy, Root",
+      "items": [
+        { "name": "Broccoli", "img": "/images/broccoli.png" },
+        { "name": "Asparagus", "img": "/images/asparagus.png" },
+        { "name": "Bell Pepper", "img": "/images/bell-pepper.png" },
+        { "name": "Corn", "img": "/images/corn.png" },
+        { "name": "Carrot", "img": "/images/carrot.png" },
+        { "name": "Spinach", "img": "/images/spinach.png" },
+        { "name": "Sweet Potatoes", "img": "/images/sweet-potato.png" },
+        { "name": "Potatoes", "img": "/images/potato.png" }
+      ]
+    },
+    {
+      "name": "Grains",
+      "description": "Bread, Cereal, Pasta, Rice",
+      "items": [
+        { "name": "Tortillas", "img": "/images/tortilla.png" },
+        { "name": "Cereal", "img": "/images/cereal.png" },
+        { "name": "Pasta", "img": "/images/pasta.png" },
+        { "name": "Rice", "img": "/images/rice.png" },
+        { "name": "Bread", "img": "/images/bread.png" },
+        { "name": "Crackers", "img": "/images/cracker.png" },
+        { "name": "Popcorn", "img": "/images/popcorn.png" },
+        { "name": "Oats", "img": "/images/oats.png" }
+      ]
+    },
+    {
+      "name": "Dairy",
+      "description": "Milk, Cheese, Yogurt",
+      "items": [
+        { "name": "Milk", "img": "/images/milk.png" },
+        { "name": "Yogurt", "img": "/images/yogurt.png" },
+        { "name": "Cheese", "img": "/images/cheese.png" },
+        { "name": "Cottage Cheese", "img": "/images/cottage-cheese.png" },
+        { "name": "Butter", "img": "/images/butter.png" },
+        { "name": "Cream", "img": "/images/cream.png" }
+      ]
+    },
+    {
+      "name": "Fruits",
+      "description": "Berries, Citrus, Stone Fruit",
+      "items": [
+        { "name": "Apples", "img": "/images/apple.png" },
+        { "name": "Bananas", "img": "/images/banana.png" },
+        { "name": "Oranges", "img": "/images/orange.png" },
+        { "name": "Strawberries", "img": "/images/strawberry.png" },
+        { "name": "Blueberries", "img": "/images/blueberry.png" },
+        { "name": "Grapes", "img": "/images/grape.png" },
+        { "name": "Pineapple", "img": "/images/pineapple.png" },
+        { "name": "Mango", "img": "/images/mango.png" },
+        { "name": "Peaches", "img": "/images/peach.png" },
+        { "name": "Pears", "img": "/images/pear.png" },
+        { "name": "Watermelon", "img": "/images/watermelon.png" }
+      ]
+    }
+  ],
+  "macros":  [
+    {
+      "name": "Calories",
+      "toggles": [
+        {
+          "name": "Low",
+          "description": "Under 400",
+          "img": ""
+        },
+        {
+          "name": "Medium",
+          "description": "400-599",
+          "img": ""
+        },
+        {
+          "name": "High",
+          "description": "600-799",
+          "img": ""
+        },
+        {
+          "name": "Very High",
+          "description": "800+",
+          "img": ""
+        }
+      ]
+    },
+    {
+      "name": "Protein",
+      "toggles": [
+        {"name": "Low",
+          "description": "Less than 20g",
+          "img": ""
+        },
+        {"name": "Standard",
+          "description": "20 to 34g",
+          "img": ""
+        },
+        {"name": "High",
+          "description": "35 to 49g",
+          "img": ""
+        },
+        {"name": "Ultra",
+          "description": "50g+",
+          "img": ""
+        }
+      ]
+    },
+    {
+      "name": "Fat",
+      "toggles": [
+        {"name": "Low",
+          "description": "Less than 25% of calories",
+          "img": ""
+        },
+        {"name": "Balanced",
+          "description": "25 to 40% of calories",
+          "img": ""
+        },
+        {"name": "High",
+          "description": "Greater than 40% of calories",
+          "img": ""
+        }
+      ]
+    },
+    {
+      "name": "Carbohydrates",
+      "toggles": [
+        {"name": "No Carb",
+          "description": "Less than 5g",
+          "img": ""
+        },
+        {"name": "Low Carb",
+          "description": "5 to 30g",
+          "img": ""
+        },
+        {"name": "Moderate",
+          "description": "30 to 75g",
+          "img": ""
+        },
+        {"name": "High",
+          "description": "75g+",
+          "img": ""
+        }
+      ]
+    }
+  ],
+  "Food Preferences": [
+    {
+      "name": "Cuisine",
+      "toggles": [
+        {
+          "name": "Italian",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Mexican",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Chinese",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Indian",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "American",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Mediterranean",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Thai",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Japanese",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "BBQ",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "African",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "French",
+          "description": "",
+          "img": ""
+        }
+      ]
+    },
+    {
+      "name": "Diet",
+      "toggles": [
+        {
+          "name": "Vegetarian",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Vegan",
+          "description": "",
+          "img": ""
+        },
+        {
+          "name": "Gluten-Free",
+          "description": "",
+          "img": ""
+        }
+      ]
+    },
+    {
+    "name": "Flavor Profile",
+    "toggles": [
+      {
+        "name": "Mild",
+        "description": "",
+        "img": ""
+      },
+      {
+        "name": "Spicy",
+        "description": "",
+        "img": ""
+      },
+      {
+        "name": "Savory",
+        "description": "",
+        "img": ""
+      },
+      {
+        "name": "Sweet",
+        "description": "",
+        "img": ""
+      },
+      {
+        "name": "Tangy",
+        "description": "",
+        "img": ""
+      },
+      {
+        "name": "Umami",
+        "description": "",
+        "img": ""
+      }
+    ]
+  }
+  ]
+}

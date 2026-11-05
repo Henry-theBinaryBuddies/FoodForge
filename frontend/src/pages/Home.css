@@ -6,6 +6,36 @@
     scroll-snap-type: x mandatory;
 }
 
+.carousel-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+
+    background: rgba(0,0,0,0.3);
+    color: white;
+    border: none;
+
+    cursor: pointer;
+
+}
+
+.carousel-arrow-left {
+    left: 10px;
+}
+
+.carousel-arrow-right {
+    right: 10px;
+}
+
 .ingredient-card {
     width: 10rem;
     aspect-ratio: 1/1;
@@ -38,6 +68,50 @@
     pointer-events: none;
 }
 
+.selectedParams {
+    position: relative;
+    width: 100%;
+
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(255 112 0);
+}
+
+.selectedParams-button-left{
+    position: absolute;
+    background: rgba(0,0,0,0.3);
+    color: white;
+    border: none;
+    cursor: pointer;
+
+    left: 24px;
+    z-index: 10;
+
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.selectedParams-button-right{
+    position: absolute;
+    background: rgba(0,0,0,0.3);
+    color: white;
+    border: none;
+    cursor: pointer;
+
+    right: 24px;
+    z-index: 10;
+
+    transition: background-color 0.3s ease, transform 0.2s ease;
+
+}
+
+.selectedParams-button-left:hover, .selectedParams-button-right:hover {
+    background-color: rgba(0,0,0,0.5);
+    transform: scale(1.1);
+}
+
 .home {
     background-image: url("../../public/images/background.png");
     background-size: cover;
@@ -45,6 +119,5 @@
     background-repeat: no-repeat;
     min-height: 100vh;
     padding: 1.5rem;
-    color: black;
 
 }
