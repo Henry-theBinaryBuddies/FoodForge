@@ -216,7 +216,8 @@ function Home() {
                         {isSending ? "Finding Recipes..." : "Next: Find Recipes"}
                     </button>
 
-                    <p role="status">{message}</p>
+                    <p className="status-message"
+                        role="status">{message}</p>
                 </>
             )}
 
