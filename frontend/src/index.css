@@ -1,6 +1,6 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
+  --text: #08060d;
+  --text-h: #6b6375;
   --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
@@ -32,8 +32,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
+    --text: #08060d;
+    --text-h: #6b6375;
     --bg: #16171d;
     --border: #2e303a;
     --code-bg: #1f2028;
@@ -69,30 +69,33 @@ body {
 h1,
 h2 {
   font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+  font-weight: bold;
 }
 
 h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
-  margin: 32px 0;
+  margin: 16px 0;
   @media (max-width: 1024px) {
     font-size: 36px;
-    margin: 20px 0;
+    margin: 10px 0;
   }
 }
 h2 {
   font-size: 24px;
   line-height: 118%;
   letter-spacing: -0.24px;
-  margin: 0 0 8px;
   @media (max-width: 1024px) {
     font-size: 20px;
   }
 }
-p {
+h3 {
+  gap: 0;
   margin: 0;
+  font-size: 12px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+  color: rgba(255 112 0);
 }
 
 code,

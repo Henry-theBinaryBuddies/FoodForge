@@ -1,12 +1,32 @@
-import ingredientData from "../data/ingredient-data.json";
-import IngredientSection from "../components/IngredientSection.jsx";
+import displayData from "../data/data.json";
+import SelectionSection from "../components/SelectionSection.jsx";
+
 import { useState } from 'react';
 
 import './Home.css';
 
 function Home() {
 
+    //Array because multiple ingredients can be selected.
     const [selectedIngredients, setSelectedIngredients] = useState([]);
+    //Object because each macro is a single selection.
+    const [selectedMacros, setSelectedMacros] = useState({
+        Calories: null,
+        Protein: null,
+        Fat: null,
+        Carbohydrates: null,
+    });
+    //Array because multiple food preferences can be selected.
+    const [selectedFoodPref, setSelectedFoodPref] = useState({
+        Cuisine: [],
+        Diet: [],
+        "Flavor Profile": [],
+    });
+
+    const [step, setStep] = useState("ingredients");
+
+    const [isSending, setIsSending] = useState(false);
+    const [message, setMessage] = useState("");
 
     function toggleIngredient(name) {
         setSelectedIngredients((previous) =>
@@ -15,25 +35,191 @@ function Home() {
                 : [...previous, name]
         );
     }
+
+    function toggleFoodPreference(category, option) {
+        setSelectedFoodPref(previous => {
+            const selected = previous[category] ?? [];
+
+            return {
+                ...previous,
+                [category]: selected.includes(option)
+                    ? selected.filter(name => name !== option)
+                    : [...selected, option],
+            };
+        });
+    }
+
+    async function sendData() {
+        setMessage("");
+        setIsSending(true);
+
+        try {
+            const response = await fetch("/api/recipe", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    ingredients: selectedIngredients,
+                    macros: selectedMacros,
+                    foodPref: selectedFoodPref,
+                })
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                console.error(data.error);
+                setMessage(data.error);
+                return;
+            }
+            setMessage("Ingredients received successfully");
+            console.log(data);
+
+
+        //Error message for backend server outage.
+        } catch (error) {
+            console.error(error);
+            setMessage("Unable to complete the request. Please try again later.");
+        } finally {
+            setIsSending(false);
+        }
+    }
+
+    function selectMacro(category, option) {
+        setSelectedMacros(previous => ({
+            ...previous,
+            [category]: previous[category] === option ? null : option,
+        }));
+    }
+
+    function goToMacros() {
+        if (selectedIngredients.length < 2) {
+            setMessage("Select at least two ingredients.");
+            return;
+        }
+
+        setMessage("");
+        setStep("macros");
+    }
+
+
     return (
         <main className="home">
+            {step === "ingredients" && (
+            <>
 
-            <h1>Select Ingredients</h1>
-            <p>Choose what you have on hand</p>
-            <p>Selected: {selectedIngredients.join(", ")}</p>
-            <button type="button"
-                onClick={() => setSelectedIngredients([])}
-            >
-                Clear Selection
-            </button>
+                <h1>Select Ingredients</h1>
+                <p>Choose what you have on hand</p>
 
-            {ingredientData.ingredients.map((category) => (
-                <IngredientSection
-                    key={category.name}
-                    category={category}
-                    selectedIngredients={selectedIngredients}
-                    onToggle={toggleIngredient}/>
-            ))}
+                {displayData.ingredients.map((category) => (
+                    <SelectionSection
+                        key={category.name}
+                        category={category}
+                        items={category.items}
+                        selectedNames={selectedIngredients}
+                        onToggle={toggleIngredient}
+                    />
+                ))}
+
+                <div className="selectedParams">
+                    <p>Selected: {selectedIngredients.join(", ")}</p>
+                    <p
+                        className="selectedParams-status"
+                        role="status"
+                    >{message}</p>
+                </div>
+
+                <button
+                    className="selectedParams-button-left"
+                    type="button"
+                    onClick={() => setSelectedIngredients([])}
+                >
+                    Clear Selection
+                </button>
+                <button
+                    className="selectedParams-button-right"
+                    type="button"
+                    onClick={goToMacros}
+                    disabled={isSending}
+                >
+                    {isSending ? "Sending..." : "Next: Macros"}
+                </button>
+            </>
+            )}
+            {step === "macros" && (
+                <>
+                    <h1>Macro Goals</h1>
+                    <p>Choose your nutritional preferences per serving</p>
+
+                    {displayData.macros.map((category) => (
+                        <SelectionSection
+                            key={category.name}
+                            category={category}
+                            items={category.toggles}
+                            selectedNames={
+                                selectedMacros[category.name]
+                                    ? [selectedMacros[category.name]]
+                                    : []
+                            }
+                            onToggle={(option) => selectMacro(category.name, option)}
+                        />
+                    ))}
+
+                    <button
+                        className="selectedParams-button-left"
+                        type="button"
+                        onClick={() => setStep("ingredients")}
+                    >
+                        Back: Ingredients
+                    </button>
+
+                    <button
+                        className="selectedParams-button-right"
+                        type="button"
+                        onClick={() => setStep("foodPref")}
+                        disabled={isSending}
+                    >
+                        {isSending ? "Sending..." : "Next: Food Preferences"}
+                    </button>
+                </>
+            )}
+
+            {step === "foodPref" && (
+                <>
+                    <h1>Food Preferences</h1>
+                    <p>Tell us your food preferences</p>
+
+                    {displayData.foodPref.map((category) => (
+                        <SelectionSection
+                            key={category.name}
+                            category={category}
+                            items={category.toggles}
+                            selectedNames={selectedFoodPref[category.name] ?? []}
+                            onToggle={(option) => toggleFoodPreference(category.name, option)}
+                        />
+                    ))}
+
+                    <button
+                        className="selectedParams-button-left"
+                        type="button"
+                        onClick={() => setStep("macros")}
+                    >
+                        Back: Macros
+                    </button>
+
+                    <button
+                        className="selectedParams-button-right"
+                        type="button"
+                        onClick={sendData}
+                        disabled={isSending}
+                    >
+                        {isSending ? "Finding Recipes..." : "Next: Find Recipes"}
+                    </button>
+
+                    <p role="status">{message}</p>
+                </>
+            )}
+
         </main>
     );
 

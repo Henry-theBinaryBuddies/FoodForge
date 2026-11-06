@@ -1,42 +1,122 @@
 const express = require("express");
-const path = require("path");
 
-const recipeData = require("../frontend/src/data/ingredient-data.json");
+const recipeData = require("../frontend/src/data/data.json");
 
 const app = express();
 const PORT = 4000;
-
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname,"..", "views"));
-app.use(express.static(path.join(__dirname, "..", "public")));
-
-// Home page
-app.get("/", function (req, res) {
-    res.render("index", {
-        title: "Home",
-        activePage: "index",
-        data: recipeData
-    });
-});
-
-// About / information page
-app.get("/about", function (req, res) {
-    res.render("about", {
-        title: "About",
-        activePage: "about",
-        data: recipeData
-    });
-});
+app.use(express.json());
 
 app.post("/recipe", function (req, res) {
-//TODO: backend logic
+    //DEFENSIVE CHECK: ENSURE JSON valid
+    if (!req.body || typeof req.body !== "object" || Array.isArray(req.body)) {
+        return res.status(400).json({
+            error: "Request body must be a JSON object."
+        })
+    }
+
+    const ingredients = req.body.ingredients;
+    const macros = req.body.macros;
+    const foodPref = req.body.foodPref;
+
+    //==================DEFENSIVE CHECKS======================
+    //DEFENSIVE CHECKS: INGREDIENTS
+    //Throw error if data received isn't an array
+    if (!Array.isArray(ingredients)) {
+        return res.status(400).json({
+            error: "Ingredients must be an array."
+        });
+    }
+    //extract each ingredients name from category, combine into one list, store unique names.
+    const allowedIngredients = new Set(
+        recipeData.ingredients.flatMap((category) =>
+        category.items.map((item) => item.name))
+    );
+    //Throw error if array contains an ingredient not within JSON
+    if (!ingredients.every((ingredient) => allowedIngredients.has(ingredient))) {
+        return res.status(400).json({
+            error: "One or more ingredients are not recognized."
+        });
+    }
+    //Throw error if an entry is an empty string.
+    if (!ingredients.every((ingredient) =>
+        typeof ingredient === "string" && ingredient.trim().length > 0
+    )) {
+        return res.status(400).json({
+            error: "Each ingredient must be a nonempty string."
+        })
+    }
+    //Throw error if ingredients array is less than 2.
+    //We cast to a new Set because it filters out duplicates.
+    if (new Set (ingredients).size < 2) {
+        return res.status(400).json({
+            error: "Select at least two ingredients."
+        })
+    }
+
+    //DEFENSIVE CHECKS: MACROS
+    //Throw error if macros is not an object or null.
+    if (macros === null || typeof macros !== "object" || Array.isArray(macros)) {
+        return res.status(400).json({
+            error: "Macros must be an object"
+        });
+    }
+    //Throw error if macro selection not in JSON options
+    for (const category of recipeData.macros) {
+        const selection = macros[category.name];
+
+        if (
+            selection !== null &&
+            !category.toggles.some((option) => option.name === selection)
+        ) {
+            return res.status(400).json({
+                error: `Invalid selection for ${category.name}.`
+            });
+        }
+    }
+
+
+    //DEFENSIVE CHECKS: FOODPREF
+    //Throw error is foodPref is not an object or null.
+    if (
+        foodPref === null ||
+        typeof foodPref !== "object" ||
+        Array.isArray(foodPref)
+    ) {
+        return res.status(400).json({
+            error: "Food preferences must be an object."
+        });
+    }
+    //Throw error if food selection not in JSON options
+    for (const category of recipeData.foodPref) {
+        const selection = foodPref[category.name];
+
+        if (!Array.isArray(selection)) {
+            return res.status(400).json({
+                error: `${category.name} must be an array.`
+            });
+        }
+
+        if (!selection.every((selection) =>
+            category.toggles.some((option) => option.name === selection)
+        )) {
+            return res.status(400).json({
+                error: `Invalid selection for ${category.name}.`
+            });
+        }
+    }
+
+    res.json({
+        ingredients: ingredients,
+        macros: macros,
+        foodPref: foodPref
+    });
+
 });
 
 app.use(function (req, res) {
-    res.status(404).render("404", {
-        title: "Page Not Found",
-        activePage: ""
-    });
+    res.status(404).json({
+        error: "Endpoint not found."
+    })
 });
 
 app.listen(PORT, function () {
