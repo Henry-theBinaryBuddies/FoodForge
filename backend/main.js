@@ -1,10 +1,24 @@
+require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
+const { askGroq } = require("./services/ai.js");
 
 const recipeData = require("../frontend/src/data/data.json");
 
 const app = express();
 const PORT = 4000;
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
+
+app.get("/recipe/test-ai", async function (req, res) {
+    try {
+        const reply = await askGroq("Suggest one simple dinner using eggs and spinach. Keep it to two sentences.");
+        res.json({ reply });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "AI request failed" });
+    }
+});
 
 app.post("/recipe", function (req, res) {
     //DEFENSIVE CHECK: ENSURE JSON valid
