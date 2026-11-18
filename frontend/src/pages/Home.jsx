@@ -1,6 +1,6 @@
 import displayData from "../data/data.json";
 import SelectionSection from "../components/SelectionSection.jsx";
-import useNavigate from "react-router";
+import { useNavigate } from "react-router";
 
 import { useState } from 'react';
 
