@@ -1,10 +1,15 @@
 const express = require("express");
 
+const {openDatabase} = require("./db/database.js");
+
 const recipeData = require("../frontend/src/data/data.json");
 
 const app = express();
 const PORT = 4000;
 app.use(express.json());
+
+const db = openDatabase();
+
 
 app.post("/recipe", function (req, res) {
     //DEFENSIVE CHECK: ENSURE JSON valid
@@ -26,6 +31,7 @@ app.post("/recipe", function (req, res) {
             error: "Ingredients must be an array."
         });
     }
+
     //extract each ingredients name from category, combine into one list, store unique names.
     const allowedIngredients = new Set(
         recipeData.ingredients.flatMap((category) =>
@@ -105,10 +111,15 @@ app.post("/recipe", function (req, res) {
         }
     }
 
+    const statement = db.prepare("SELECT recipeID, name, description FROM RECIPE");
+    const recipes = statement.all();
+
+
     res.json({
         ingredients: ingredients,
         macros: macros,
-        foodPref: foodPref
+        foodPref: foodPref,
+        recipes: recipes
     });
 
 });
