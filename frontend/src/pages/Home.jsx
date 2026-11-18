@@ -1,5 +1,6 @@
 import displayData from "../data/data.json";
 import SelectionSection from "../components/SelectionSection.jsx";
+import useNavigate from "react-router";
 
 import { useState } from 'react';
 
@@ -27,6 +28,7 @@ function Home() {
 
     const [isSending, setIsSending] = useState(false);
     const [message, setMessage] = useState("");
+
 
     function toggleIngredient(name) {
         setSelectedIngredients((previous) =>
