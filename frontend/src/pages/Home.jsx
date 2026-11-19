@@ -74,7 +74,6 @@ function Home() {
                 setMessage(data.error);
                 return;
             }
-            setMessage(`Server accepted these ingredients: ${data.ingredients.join(", ")}`);
             console.log(data);
 
             navigate("/recipes", { state: data.recipes});
