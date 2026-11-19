@@ -28,7 +28,7 @@ function Home() {
 
     const [isSending, setIsSending] = useState(false);
     const [message, setMessage] = useState("");
-
+    const navigate = useNavigate();
 
     function toggleIngredient(name) {
         setSelectedIngredients((previous) =>
@@ -76,6 +76,8 @@ function Home() {
             }
             setMessage(`Server accepted these ingredients: ${data.ingredients.join(", ")}`);
             console.log(data);
+
+            navigate("/recipes", { state: data.recipes});
 
 
         //Error message for backend server outage.

@@ -1,6 +1,10 @@
 import './Recipes.css';
+import { useLocation } from 'react-router';
 
 function Recipes(){
+
+    const location = useLocation();
+
     const sampleRecipe = {name: "Chicken Fried Rice",
         description: "Quick weeknight fried rice with chicken, egg, and vegetables.",
         instructions: [
@@ -23,39 +27,42 @@ function Recipes(){
         flavors: ["Savory", "Umami"],
     }
 
+    const recipe = location.state?.[0] ?? sampleRecipe;
+
+
     return (
         <main className="recipes">
             <h1>Recipe Results</h1>
             <article className="recipe-results">
                 <header>
-                    <h2>{sampleRecipe.name}</h2>
-                    <p>{sampleRecipe.description}</p>
+                    <h2>{recipe.name}</h2>
+                    <p>{recipe.description}</p>
                 </header>
                 <section className="recipe-nutrition">
                     <h3>Nutrition per serving: </h3>
                     <div className="nutrition-grid">
                         <strong>Calories:</strong>
-                        <span>{sampleRecipe.calories} kcal</span>
+                        <span>{recipe.calories} kcal</span>
                         <strong>Protein:</strong>
-                        <span>{sampleRecipe.protein} g</span>
+                        <span>{recipe.protein} g</span>
                         <strong>Fat:</strong>
-                        <span>{sampleRecipe.fat} g</span>
+                        <span>{recipe.fat} g</span>
                         <strong>Carbs:</strong>
-                        <span>{sampleRecipe.carbs} g</span>
+                        <span>{recipe.carbs} g</span>
                     </div>
                     <div className="recipe-tags">
-                        Cuisine: <span className="recipe-tag">{sampleRecipe.cuisine}</span>
-                        Diet: {sampleRecipe.diets.map((diet) => <span className="recipe-tag"> {diet}</span>)}
-                        Flavor Profile: {sampleRecipe.flavors.map((flavor) => <span className="recipe-tag"> {flavor}</span>)}
+                        Cuisine: <span className="recipe-tag">{recipe.cuisine}</span>
+                        Diet: {recipe.diets.map((diet) => <span className="recipe-tag" key={diet}> {diet}</span>)}
+                        Flavor Profile: {recipe.flavors.map((flavor) => <span className="recipe-tag" key={flavor}> {flavor}</span>)}
                     </div>
                 </section>
                 <h3>Ingredients:</h3>
                 <ul>
-                    {sampleRecipe.ingredients.map((ingredient) => <li> {ingredient[0]} {ingredient[1]} {ingredient[2]}</li>)}
+                    {recipe.ingredients.map((ingredient) => <li>{ingredient[1]} {ingredient[2]} {ingredient[0]}</li>)}
                 </ul>
                 <h3>Instructions:</h3>
                 <div className="recipe-instructions">
-                    {sampleRecipe.instructions}
+                    {recipe.instructions}
                 </div>
             </article>
         </main>
