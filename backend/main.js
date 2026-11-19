@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { askGroq } = require("./services/ai.js");
@@ -45,6 +44,7 @@ app.post("/recipe", function (req, res) {
             error: "Ingredients must be an array."
         });
     }
+
     //extract each ingredients name from category, combine into one list, store unique names.
     const allowedIngredients = new Set(
         recipeData.ingredients.flatMap((category) =>

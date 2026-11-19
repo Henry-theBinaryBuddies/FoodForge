@@ -1,5 +1,6 @@
 import displayData from "../data/data.json";
 import SelectionSection from "../components/SelectionSection.jsx";
+import { useNavigate } from "react-router";
 
 import { useState } from 'react';
 
@@ -27,6 +28,7 @@ function Home() {
 
     const [isSending, setIsSending] = useState(false);
     const [message, setMessage] = useState("");
+    const navigate = useNavigate();
 
     function toggleIngredient(name) {
         setSelectedIngredients((previous) =>
@@ -72,8 +74,9 @@ function Home() {
                 setMessage(data.error);
                 return;
             }
-            setMessage(`Server accepted these ingredients: ${data.ingredients.join(", ")}`);
             console.log(data);
+
+            navigate("/recipes", { state: data.recipes});
 
 
         //Error message for backend server outage.
@@ -122,28 +125,42 @@ function Home() {
                 ))}
 
                 <div className="selectedParams">
-                    <p>Selected: {selectedIngredients.join(", ")}</p>
-                    <p
-                        className="selectedParams-status"
-                        role="status"
-                    >{message}</p>
+                    <p>Selected ingredients ({selectedIngredients.length})</p>
+                    {selectedIngredients.length === 0 && (
+                        <p>No ingredient selected yet.</p>)}
+                    <div className="selected-chips">
+                        {selectedIngredients.map((name) => (
+                            <button
+                                key={name}
+                                type="button"
+                                className="selected-chip"
+                                onClick={() => toggleIngredient(name)}
+                                aria-label={`Remove ${name}`}
+                            >
+                                {name} ×
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                <button
-                    className="selectedParams-button-left"
-                    type="button"
-                    onClick={() => setSelectedIngredients([])}
-                >
-                    Clear Selection
-                </button>
-                <button
-                    className="selectedParams-button-right"
-                    type="button"
-                    onClick={goToMacros}
-                    disabled={isSending}
-                >
-                    {isSending ? "Sending..." : "Next: Macros"}
-                </button>
+                <div className="form-actions">
+
+                    <button
+                        className="selectedParams-button-left"
+                        type="button"
+                        onClick={() => setSelectedIngredients([])}
+                    >
+                        Clear Selection
+                    </button>
+                    <button
+                        className="selectedParams-button-right"
+                        type="button"
+                        onClick={goToMacros}
+                        disabled={isSending}
+                    >
+                        {isSending ? "Sending..." : "Next: Macros"}
+                    </button>
+                </div>
             </>
             )}
             {step === "macros" && (
@@ -165,22 +182,24 @@ function Home() {
                         />
                     ))}
 
-                    <button
-                        className="selectedParams-button-left"
-                        type="button"
-                        onClick={() => setStep("ingredients")}
-                    >
-                        Back: Ingredients
-                    </button>
+                    <div className="form-actions">
+                        <button
+                            className="selectedParams-button-left"
+                            type="button"
+                            onClick={() => setStep("ingredients")}
+                        >
+                            Back: Ingredients
+                        </button>
 
-                    <button
-                        className="selectedParams-button-right"
-                        type="button"
-                        onClick={() => setStep("foodPref")}
-                        disabled={isSending}
-                    >
-                        {isSending ? "Sending..." : "Next: Food Preferences"}
-                    </button>
+                        <button
+                            className="selectedParams-button-right"
+                            type="button"
+                            onClick={() => setStep("foodPref")}
+                            disabled={isSending}
+                        >
+                            {isSending ? "Sending..." : "Next: Food Preferences"}
+                        </button>
+                    </div>
                 </>
             )}
 
@@ -198,24 +217,24 @@ function Home() {
                             onToggle={(option) => toggleFoodPreference(category.name, option)}
                         />
                     ))}
+                    <div className="form-actions">
+                        <button
+                            className="selectedParams-button-left"
+                            type="button"
+                            onClick={() => setStep("macros")}
+                        >
+                            Back: Macros
+                        </button>
 
-                    <button
-                        className="selectedParams-button-left"
-                        type="button"
-                        onClick={() => setStep("macros")}
-                    >
-                        Back: Macros
-                    </button>
-
-                    <button
-                        className="selectedParams-button-right"
-                        type="button"
-                        onClick={sendData}
-                        disabled={isSending}
-                    >
-                        {isSending ? "Finding Recipes..." : "Next: Find Recipes"}
-                    </button>
-
+                        <button
+                            className="selectedParams-button-right"
+                            type="button"
+                            onClick={sendData}
+                            disabled={isSending}
+                        >
+                            {isSending ? "Finding Recipes..." : "Next: Find Recipes"}
+                        </button>
+                    </div>
                     <p className="status-message"
                         role="status">{message}</p>
                 </>
