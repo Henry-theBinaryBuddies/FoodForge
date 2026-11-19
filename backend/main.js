@@ -135,12 +135,17 @@ app.post("/recipe", function (req, res) {
 
 });
 
+// Default route.  Should only get to here if a route
+// was passed in that we don't have a handler for.  Keep
+// this route as the very last handler or bad things will
+// happen.
 app.use(function (req, res) {
     res.status(404).json({
         error: "Endpoint not found."
     })
 });
 
+// Start the server.
 app.listen(PORT, function () {
     console.log("FoodForge app running at http://localhost:" + PORT);
 });
