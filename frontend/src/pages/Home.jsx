@@ -56,7 +56,7 @@ function Home() {
         setIsSending(true);
 
         try {
-            const response = await fetch("/api/recipe", {
+            const response = await fetch("/api/recipe/search", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
