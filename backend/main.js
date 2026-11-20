@@ -1,10 +1,28 @@
 const express = require("express");
+const cors = require("cors");
+const { askGroq } = require("./services/ai.js");
+const { openDatabase } = require("./db/database");
+const { findRecipes } = require("./db/search");
+
+const db = openDatabase();
+
 
 const recipeData = require("../frontend/src/data/data.json");
 
 const app = express();
 const PORT = 4000;
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
+
+app.get("/recipe/test-ai", async function (req, res) {
+    try {
+        const reply = await askGroq("Suggest one simple dinner using eggs and spinach. Keep it to two sentences.");
+        res.json({ reply });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "AI request failed" });
+    }
+});
 
 app.post("/recipe", function (req, res) {
     //DEFENSIVE CHECK: ENSURE JSON valid
@@ -26,10 +44,11 @@ app.post("/recipe", function (req, res) {
             error: "Ingredients must be an array."
         });
     }
+
     //extract each ingredients name from category, combine into one list, store unique names.
     const allowedIngredients = new Set(
         recipeData.ingredients.flatMap((category) =>
-        category.items.map((item) => item.name))
+            category.items.map((item) => item.name))
     );
     //Throw error if array contains an ingredient not within JSON
     if (!ingredients.every((ingredient) => allowedIngredients.has(ingredient))) {
@@ -47,7 +66,7 @@ app.post("/recipe", function (req, res) {
     }
     //Throw error if ingredients array is less than 2.
     //We cast to a new Set because it filters out duplicates.
-    if (new Set (ingredients).size < 2) {
+    if (new Set(ingredients).size < 2) {
         return res.status(400).json({
             error: "Select at least two ingredients."
         })
@@ -105,11 +124,14 @@ app.post("/recipe", function (req, res) {
         }
     }
 
-    res.json({
-        ingredients: ingredients,
-        macros: macros,
-        foodPref: foodPref
-    });
+    try {
+        const recipes = findRecipes(db, { ingredients, macros, foodPref });
+        res.json({ recipes });
+    } catch(error) {
+        console.error(error);
+        res.status(500).json({error: "Failed to search for recipes"});
+    }
+
 
 });
 
