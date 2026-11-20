@@ -1,31 +1,33 @@
 require("dotenv").config();
 const express = require("express");
-const cors = require("cors");
-const { askGroq } = require("./services/ai.js");
 const { openDatabase } = require("./db/database");
 const { findRecipes } = require("./db/search");
 
 const db = openDatabase();
 
 
-const recipeData = require("../frontend/src/data/data.json");
+const recipeData = require("../../frontend/src/data/data.json");
 
 const app = express();
-const PORT = 4000;
-app.use(cors({ origin: "http://localhost:5173" }));
+const PORT = process.env.PORT || 4001;
+const SERVICE_API_KEY = process.env.SERVICE_API_KEY;
+
 app.use(express.json());
 
-app.get("/recipe/test-ai", async function (req, res) {
-    try {
-        const reply = await askGroq("Suggest one simple dinner using eggs and spinach. Keep it to two sentences.");
-        res.json({ reply });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "AI request failed" });
-    }
+//health check: the only route that does not need the internal key
+app.get("/health", function (req, res) {
+    res.json({ status: "ok", service: "recipe-service" });
 });
 
-app.post("/recipe", function (req, res) {
+//INTERNAL API KEY: every route below requires the x-api-key header (set by the gateway)
+app.use(function (req, res, next) {
+    if (!SERVICE_API_KEY || req.get("x-api-key") !== SERVICE_API_KEY) {
+        return res.status(401).json({ error: "Missing or invalid API key." });
+    }
+    next();
+});
+
+app.post("/recipe/search", function (req, res) {
     //DEFENSIVE CHECK: ENSURE JSON valid
     if (!req.body || typeof req.body !== "object" || Array.isArray(req.body)) {
         return res.status(400).json({

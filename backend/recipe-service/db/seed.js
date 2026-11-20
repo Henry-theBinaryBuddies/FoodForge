@@ -11,7 +11,7 @@
 // -already in there as an AI recipe >> skips and prints a warning
 
 const { openDatabase, DB_PATH } = require("./database");
-const appData = require("../../frontend/src/data/data.json");
+const appData = require("../../../frontend/src/data/data.json");
 const recipes = require("./recipes");
 
 //HELPERS
