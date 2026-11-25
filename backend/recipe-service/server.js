@@ -3,10 +3,15 @@ const express = require("express");
 const { openDatabase } = require("./db/database");
 const { findRecipes } = require("./db/search");
 
+const { getOptions } = require("./db/options");
+
 const db = openDatabase();
 
-
-const recipeData = require("../../frontend/src/data/data.json");
+//stop early with a clear message if the database was never seeded
+if (getOptions(db).ingredients.length === 0) {
+    console.error("The database has no ingredients. Run 'npm run seed' first.");
+    process.exit(1);
+}
 
 const app = express();
 const PORT = process.env.PORT || 4001;
@@ -27,6 +32,11 @@ app.use(function (req, res, next) {
     next();
 });
 
+//everything the frontend can show as a selection (ingredients, macros, food preferences)
+app.get("/options", function (req, res) {
+    res.json(getOptions(db));
+});
+
 app.post("/recipe/search", function (req, res) {
     //DEFENSIVE CHECK: ENSURE JSON valid
     if (!req.body || typeof req.body !== "object" || Array.isArray(req.body)) {
@@ -38,6 +48,9 @@ app.post("/recipe/search", function (req, res) {
     const ingredients = req.body.ingredients;
     const macros = req.body.macros;
     const foodPref = req.body.foodPref;
+
+    //current options from the database
+    const recipeData = getOptions(db);
 
     //==================DEFENSIVE CHECKS======================
     //DEFENSIVE CHECKS: INGREDIENTS
@@ -53,7 +66,7 @@ app.post("/recipe/search", function (req, res) {
         recipeData.ingredients.flatMap((category) =>
             category.items.map((item) => item.name))
     );
-    //Throw error if array contains an ingredient not within JSON
+    //Throw error if array contains an ingredient that isn't a selectable option
     if (!ingredients.every((ingredient) => allowedIngredients.has(ingredient))) {
         return res.status(400).json({
             error: "One or more ingredients are not recognized."
@@ -82,7 +95,7 @@ app.post("/recipe/search", function (req, res) {
             error: "Macros must be an object"
         });
     }
-    //Throw error if macro selection not in JSON options
+    //Throw error if macro selection not in the macro options
     for (const category of recipeData.macros) {
         const selection = macros[category.name];
 
@@ -108,7 +121,7 @@ app.post("/recipe/search", function (req, res) {
             error: "Food preferences must be an object."
         });
     }
-    //Throw error if food selection not in JSON options
+    //Throw error if food selection not in the database options
     for (const category of recipeData.foodPref) {
         const selection = foodPref[category.name];
 

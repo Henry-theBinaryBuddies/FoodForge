@@ -63,6 +63,10 @@ app.get("/api/health", async function (req, res) {
     res.status(allUp ? 200 : 503).json({ status: allUp ? "ok" : "degraded", gateway: "up", services });
 });
 
+//OPTIONS: everything the frontend can show as a selection (from the recipe service's database)
+app.get("/api/options", (req, res) =>
+    forward(res, "recipe", "/options"));
+
 //RECIPES
 app.post("/api/recipe/search", (req, res) =>
     forward(res, "recipe", "/recipe/search", { method: "POST", body: req.body }));

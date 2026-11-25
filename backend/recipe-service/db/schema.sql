@@ -9,6 +9,9 @@ PRAGMA foreign_keys = ON;
 
 --LOOKUP TABLES
 --COLLATE NOCASE: not case sensitive
+--imageURL: picture shown in the app (path under frontend/public)
+--isStaple: 1 = pantry staple (oil, salt, spices...). saved so recipes list everything they use,
+--          but never shown as an option. recipe search should assume the user has these
 
 CREATE TABLE IF NOT EXISTS INGREDIENTCATEGORY (
     categoryID INTEGER PRIMARY KEY,
@@ -20,22 +23,26 @@ CREATE TABLE IF NOT EXISTS INGREDIENT (
     ingredientID INTEGER PRIMARY KEY,
     name TEXT NOT NULL UNIQUE COLLATE NOCASE,
     imageURL TEXT,
-    categoryID INTEGER NOT NULL REFERENCES INGREDIENTCATEGORY (categoryID)
+    categoryID INTEGER NOT NULL REFERENCES INGREDIENTCATEGORY (categoryID),
+    isStaple INTEGER NOT NULL DEFAULT 0 CHECK (isStaple IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS CUISINE (
     cuisineID INTEGER PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE COLLATE NOCASE
+    name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    imageURL TEXT
 );
 
 CREATE TABLE IF NOT EXISTS DIET (
     dietID INTEGER PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE COLLATE NOCASE
+    name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    imageURL TEXT
 );
 
 CREATE TABLE IF NOT EXISTS FLAVORPROFILE (
     flavorID INTEGER PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE COLLATE NOCASE
+    name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    imageURL TEXT
 );
 
 --RECIPES

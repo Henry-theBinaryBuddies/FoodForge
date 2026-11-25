@@ -1,35 +1,23 @@
 
 //MACRO RANGES
-//keys must exactly match the category and option names in frontend/src/data/data.json
+//built from config/macros.js so the ranges are only defined in one place
 //each range is [min, max): min is included, max is not. null means no limit on that side
-//(the descriptions in data.json overlap at the edges, e.g. 5-30 and 30-75, so max is exclusive)
 //Calories, Protein, and Carbohydrates are compared against the recipe's value directly
-//Fat is a fraction of calories (fat grams * 9 / calories), not grams
-const MACRO_RANGES = {
-    Calories: {
-        "Low": [0, 400],
-        "Medium": [400, 600],
-        "High": [600, 800],
-        "Very High": [800, null],
-    },
-    Protein: {
-        "Low": [0, 20],
-        "Standard": [20, 35],
-        "High": [35, 50],
-        "Ultra": [50, null],
-    },
-    Carbohydrates: {
-        "No Carb": [0, 5],
-        "Low Carb": [5, 30],
-        "Moderate": [30, 75],
-        "High": [75, null],
-    },
-    Fat: {
-        "Low": [0, 0.25],
-        "Balanced": [0.25, 0.40],
-        "High": [0.40, null],
-    },
-};
+//Fat is a fraction of calories (fat grams * 9 / calories), not grams. config stores it as a percent
+const macroConfig = require("../config/macros");
+
+const MACRO_RANGES = Object.fromEntries(
+    macroConfig.map((category) => {
+        const divisor = category.name === "Fat" ? 100 : 1;
+        const toFraction = (n) => (n === null ? null : n / divisor);
+        return [
+            category.name,
+            Object.fromEntries(
+                category.toggles.map((t) => [t.name, [toFraction(t.min), toFraction(t.max)]])
+            ),
+        ];
+    })
+);
 
 const MACRO_COLUMNS = {
     Calories: "r.calories",
@@ -99,8 +87,9 @@ function findRecipes(db, { ingredients, macros, foodPref }, limit = 4) {
     SELECT r.recipeID, r.name, r.description, r.instructions,
            r.calories, r.protein, r.fat, r.carbs,
            c.name AS cuisine,
-           SUM(CASE WHEN i.name IN (${placeholders(picked)}) THEN 1 ELSE 0 END) AS matchedCount,
-           COUNT(*) AS totalCount
+           -- pantry staples (isStaple = 1) are assumed on hand, so they are left out of both counts
+           SUM(CASE WHEN i.isStaple = 0 AND i.name IN (${placeholders(picked)}) THEN 1 ELSE 0 END) AS matchedCount,
+           SUM(CASE WHEN i.isStaple = 0 THEN 1 ELSE 0 END) AS totalCount
     FROM RECIPE r
     JOIN CUISINE c ON c.cuisineID = r.cuisineID
     JOIN RECIPEINGREDIENT ri ON ri.recipeID = r.recipeID

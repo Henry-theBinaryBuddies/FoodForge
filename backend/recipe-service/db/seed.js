@@ -3,34 +3,26 @@
 // cd backend
 // npm run seed
 
-//creates any missing tables
-//adds any categories, ingredients, cuisines, diets, and flavors from data.json that aren't in the database yet
+//creates any missing tables/columns
+//adds or updates the categories, ingredients, pantry staples, cuisines, diets, and flavors from catalog.js
+//(nothing is deleted. an item removed from catalog.js stays in the database)
 //for each recipe in recipes.js
 // -not in the database >> inserts it (source = 'seed')
 // -already in there as a seed recipe >> updates it to match recipes.js
 // -already in there as an AI recipe >> skips and prints a warning
 
 const { openDatabase, DB_PATH } = require("./database");
-const appData = require("../../../frontend/src/data/data.json");
+const catalog = require("./catalog");
 const recipes = require("./recipes");
 
 //HELPERS
-//finds a foodPref section in data.json by name
-function foodPrefSection(name) {
-    const section = appData.foodPref.find((s) => s.name === name);
-    if (!section) {
-        throw new Error(`data.json has no foodPref section named "${name}".`);
-    }
-    return section.toggles;
-}
-
 //looks up ID by name
 function lookup(map, name, kind, recipeName) {
     const id = map.get(name);
     if (id === undefined) {
         throw new Error(
             `Recipe "${recipeName}" uses unknown ${kind} "${name}". ` +
-            `It must exactly match a name in the ${kind} list in data.json.`
+            `It must exactly match a ${kind} name in db/catalog.js.`
         );
     }
     return id;
@@ -48,33 +40,46 @@ const stats = { added: 0, updated: 0, skipped: [] };
 
 db.exec("BEGIN");
 try {
-    //add ingredient categories and ingredients only if missing
-    const insertCategory = db.prepare(
-        "INSERT OR IGNORE INTO INGREDIENTCATEGORY (name, description) VALUES (?, ?)"
-    );
-    for (const category of appData.ingredients) {
-        insertCategory.run(category.name, category.description ?? null);
+    //ingredient categories (selectable ones + pantry staples)
+    const upsertCategory = db.prepare(`
+        INSERT INTO INGREDIENTCATEGORY (name, description) VALUES (?, ?)
+        ON CONFLICT (name) DO UPDATE SET description = excluded.description
+    `);
+    for (const category of [...catalog.categories, catalog.staples.category]) {
+        upsertCategory.run(category.name, category.description ?? null);
     }
     const categoryIDs = idMap(db, "INGREDIENTCATEGORY", "categoryID");
 
-    const insertIngredient = db.prepare(
-        "INSERT OR IGNORE INTO INGREDIENT (name, imageURL, categoryID) VALUES (?, ?, ?)"
-    );
-    for (const category of appData.ingredients) {
+    //ingredients
+    const upsertIngredient = db.prepare(`
+        INSERT INTO INGREDIENT (name, imageURL, categoryID, isStaple) VALUES (?, ?, ?, ?)
+        ON CONFLICT (name) DO UPDATE SET
+            imageURL = excluded.imageURL,
+            categoryID = excluded.categoryID,
+            isStaple = excluded.isStaple
+    `);
+    for (const category of catalog.categories) {
         for (const item of category.items) {
-            insertIngredient.run(item.name, item.img ?? null, categoryIDs.get(category.name));
+            upsertIngredient.run(item.name, item.img ?? null, categoryIDs.get(category.name), 0);
         }
     }
+    const stapleCategoryID = categoryIDs.get(catalog.staples.category.name);
+    for (const name of catalog.staples.items) {
+        upsertIngredient.run(name, null, stapleCategoryID, 1);
+    }
 
-    //name-only tables, only added if missing
-    for (const [table, sectionName] of [
-        ["CUISINE", "Cuisine"],
-        ["DIET", "Diet"],
-        ["FLAVORPROFILE", "Flavor Profile"],
+    //cuisines, diets, flavors
+    for (const [table, options] of [
+        ["CUISINE", catalog.cuisines],
+        ["DIET", catalog.diets],
+        ["FLAVORPROFILE", catalog.flavors],
     ]) {
-        const insert = db.prepare(`INSERT OR IGNORE INTO ${table} (name) VALUES (?)`);
-        for (const option of foodPrefSection(sectionName)) {
-            insert.run(option.name);
+        const upsert = db.prepare(`
+            INSERT INTO ${table} (name, imageURL) VALUES (?, ?)
+            ON CONFLICT (name) DO UPDATE SET imageURL = excluded.imageURL
+        `);
+        for (const option of options) {
+            upsert.run(option.name, option.img ?? null);
         }
     }
 
@@ -82,6 +87,7 @@ try {
     const cuisineIDs = idMap(db, "CUISINE", "cuisineID");
     const dietIDs = idMap(db, "DIET", "dietID");
     const flavorIDs = idMap(db, "FLAVORPROFILE", "flavorID");
+    const stapleNames = new Set(catalog.staples.items);
 
     //recipes
     const findRecipe = db.prepare("SELECT recipeID, source FROM RECIPE WHERE name = ?");
@@ -112,8 +118,10 @@ try {
     );
 
     for (const r of recipes) {
-        if (!r.ingredients || r.ingredients.length === 0) {
-            throw new Error(`Recipe "${r.name}" must have at least one ingredient.`);
+        if (!r.ingredients || !r.ingredients.some(([name]) => !stapleNames.has(name))) {
+            throw new Error(
+                `Recipe "${r.name}" must have at least one ingredient that is not a pantry staple.`
+            );
         }
 
         const fields = [
@@ -180,11 +188,15 @@ for (const name of stats.skipped) {
 const count = (sql) => db.prepare(sql).get().n;
 console.log("");
 for (const table of [
-    "INGREDIENTCATEGORY", "INGREDIENT", "CUISINE", "DIET", "FLAVORPROFILE",
+    "INGREDIENTCATEGORY", "CUISINE", "DIET", "FLAVORPROFILE",
     "RECIPEINGREDIENT", "RECIPEDIET", "RECIPEFLAVOR",
 ]) {
     console.log(`  ${table.padEnd(18)} ${count(`SELECT COUNT(*) AS n FROM ${table}`)} rows`);
 }
+console.log(
+    `  ${"INGREDIENT".padEnd(18)} ${count("SELECT COUNT(*) AS n FROM INGREDIENT")} rows ` +
+    `(${count("SELECT COUNT(*) AS n FROM INGREDIENT WHERE isStaple = 1")} pantry staples)`
+);
 console.log(
     `  ${"RECIPE".padEnd(18)} ${count("SELECT COUNT(*) AS n FROM RECIPE")} rows ` +
     `(${count("SELECT COUNT(*) AS n FROM RECIPE WHERE source = 'seed'")} seed, ` +
