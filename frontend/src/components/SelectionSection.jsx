@@ -44,7 +44,7 @@ function SelectionSection({category, items, selectedNames, onToggle}) {
             className="carousel-arrow carousel-arrow-left"
             onClick={() => scrollCarousel("left")}
         >
-            &lt;
+            ←
         </button>
         <div className="carousel" ref={carouselRef}>
 
@@ -63,7 +63,7 @@ function SelectionSection({category, items, selectedNames, onToggle}) {
             className="carousel-arrow carousel-arrow-right"
             onClick={() => scrollCarousel("right")}
         >
-            &gt;
+            →
         </button>
     </section>
     );

@@ -145,6 +145,7 @@ function Home() {
 
                 <div className="form-actions">
 
+
                     <button
                         className="selectedParams-button-left"
                         type="button"
@@ -152,6 +153,9 @@ function Home() {
                     >
                         Clear Selection
                     </button>
+
+                    <p className="status-message" role="status">{message}</p>
+
                     <button
                         className="selectedParams-button-right"
                         type="button"

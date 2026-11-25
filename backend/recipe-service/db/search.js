@@ -107,7 +107,7 @@ function findRecipes(db, { ingredients, macros, foodPref }, limit = 4) {
     JOIN INGREDIENT i ON i.ingredientID = ri.ingredientID
     ${whereSql}
     GROUP BY r.recipeID
-    HAVING matchedCount > 0
+    HAVING matchedCount = totalCount
     ORDER BY matchedCount DESC, (totalCount - matchedCount) ASC, r.name
     LIMIT ?
 `;
