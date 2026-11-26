@@ -2,7 +2,7 @@ import SelectionCard from "./SelectionCard.jsx";
 import { useRef } from 'react';
 
 
-function SelectionSection({category, items, selectedNames, onToggle}) {
+function SelectionSection({category, items, selectedNames, onToggle, mobileCarouselOnly}) {
     const carouselRef = useRef(null);
 
     //Infinity Carousel
@@ -37,14 +37,14 @@ function SelectionSection({category, items, selectedNames, onToggle}) {
 
     }
     return (
-    <section className="carousel-wrapper">
+    <section className={mobileCarouselOnly ? "carousel-wrapper mobile-carousel-only" : "carousel-wrapper"}>
         <h2>{category.name}</h2>
         <h3>{category.description}</h3>
         <button
             className="carousel-arrow carousel-arrow-left"
             onClick={() => scrollCarousel("left")}
         >
-            &lt;
+            ←
         </button>
         <div className="carousel" ref={carouselRef}>
 
@@ -63,7 +63,7 @@ function SelectionSection({category, items, selectedNames, onToggle}) {
             className="carousel-arrow carousel-arrow-right"
             onClick={() => scrollCarousel("right")}
         >
-            &gt;
+            →
         </button>
     </section>
     );

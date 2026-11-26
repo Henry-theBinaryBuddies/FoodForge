@@ -1,6 +1,7 @@
 node_modules/
 .env
-db/*.db
-db/*.db-journal
-db/*.db-wal
-db/*.db-shm
+# generated SQLite database files (any service)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm

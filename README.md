@@ -16,8 +16,8 @@ npm ci
 npm run seed
 npm start
 
-(npm run seed only needs to be run the first time, or after recipes.js or
-data.json changes)
+(npm run seed must be run before the first start, and again after
+catalog.js or recipes.js changes. The backend will not start on an empty database.)
 
 Frontend:
 cd frontend
@@ -37,32 +37,43 @@ at bottom of page.
 - Stop the backend and submit. Confirm an error message appears. Restart it and submit again to confirm recovery.
 
 ## Database
-FoodForge uses a SQLite database stored at `backend/db/foodforge.db`. The file
+FoodForge uses a SQLite database stored at `backend/recipe-service/db/foodforge.db`. The file
 is not committed to git; each person builds their own copy with `npm run seed`.
 No database server or extra install is needed.
 
-Files in `backend/db/`:
+Files in `backend/recipe-service/db/`:
 - `schema.sql` - table definitions. Safe to run repeatedly; it only creates missing tables.
-- `database.js` - `openDatabase()` opens the database with foreign keys on and creates any missing tables. Use it for all database access.
+- `database.js` - `openDatabase()` opens the database with foreign keys on, creates any missing tables,
+  and adds columns that older databases are missing. Use it for all database access.
+- `catalog.js` - starter ingredients (by category), pantry staples, cuisines, diets, and flavors.
 - `recipes.js` - starter recipes. Add or edit recipes here (instructions are at the top of the file).
-- `seed.js` - adds the ingredients, categories, cuisines, diets, and flavors from
-  `frontend/src/data/data.json`, then adds or updates the recipes from `recipes.js`.
+- `options.js` - `getOptions(db)` builds the list of selectable options from the database.
+- `search.js` - `findRecipes()` finds recipes matching the user's selections.
+- `seed.js` - adds or updates everything in `catalog.js`, then adds or updates the recipes from `recipes.js`.
 - `reset.js` - deletes the database file (used by `npm run db:reset`).
 
-Commands (run from the `backend` folder):
+Commands (run from the `backend/recipe-service` folder):
 - `npm run seed` - creates the database if needed and adds/updates starter data.
   Never deletes anything, including AI-generated recipes.
 - `npm run db:reset` - deletes the database and rebuilds it from scratch.
   **This also deletes any saved AI-generated recipes.** Stop the backend first.
 
 Notes:
+- The database is the source of truth for the options in the app. The recipe service's `GET /options` returns them
+  (`GET /api/options` through the API gateway), and `POST /recipe/search` validates selections against the database.
+- Macro goal ranges are filter rules rather than records, so they live in `backend/recipe-service/config/macros.js`
+  (used for both the options list and recipe search).
 - Recipe macros are per serving: calories in kcal; protein, fat, and carbs in grams.
-- Recipes only link to the ingredients users can select in the app. Pantry
-  staples (oil, salt, garlic, spices, etc.) are mentioned in the instructions only.
+- Recipes list every ingredient they use. Pantry staples (oil, salt, pepper, spices, sugar, etc.)
+  are stored as ingredients with `isStaple = 1`. They are never shown as options, and recipe
+  search ignores them (users are assumed to have them).
+- Each option's `img` in `catalog.js` is a path under `frontend/public/images`. Images still needed:
+  onion.svg, tomato.svg, garlic.svg, lime.svg, soy-sauce.svg, bbq-sauce.svg, broth.svg, coconut-milk.svg
+  (rename the paths in `catalog.js` if the real files use different names, then run `npm run seed`).
 - Each recipe has a `source` of `seed` (from recipes.js) or `ai` (AI-generated and saved).
 - Node prints an "SQLite is an experimental feature" warning. This is expected and harmless.
 
 ## Current scope
 Ingredient selection, preference collection, validation, and frontend-backend communication are implemented.
-The SQLite database (schema, starter recipes, and seed scripts) is set up but not yet connected to the app.
+The app's selectable options and recipe search are served from the SQLite database.
 Recipe search and AI generation are planned for Phase III.
