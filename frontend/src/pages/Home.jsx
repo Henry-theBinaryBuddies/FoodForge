@@ -1,8 +1,8 @@
-import displayData from "../data/data.json";
 import SelectionSection from "../components/SelectionSection.jsx";
 import { useNavigate } from "react-router";
 
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 import './Home.css';
 
@@ -24,11 +24,33 @@ function Home() {
         "Flavor Profile": [],
     });
 
+    const [displayData, setDisplayData] = useState({ingredients: [], macros: [], foodPref: []});
+
     const [step, setStep] = useState("ingredients");
 
     const [isSending, setIsSending] = useState(false);
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
+
+    useEffect( () => {
+        async function loadOptions() {
+            try {
+                const response = await fetch("/api/options");
+
+                if (!response.ok) {
+                    throw new Error("Unable to load selection options.")
+                }
+                const data = await response.json();
+                setDisplayData(data);
+            } catch (error) {
+                console.error(error);
+                setMessage("Unable to load selection options. Please try again later.");
+            }
+        }
+
+        loadOptions();
+
+    }, []);
 
     function toggleIngredient(name) {
         setSelectedIngredients((previous) =>
@@ -121,6 +143,7 @@ function Home() {
                         items={category.items}
                         selectedNames={selectedIngredients}
                         onToggle={toggleIngredient}
+                        mobileCarouselOnly={false}
                     />
                 ))}
 
@@ -183,6 +206,7 @@ function Home() {
                                     : []
                             }
                             onToggle={(option) => selectMacro(category.name, option)}
+                            mobileCarouselOnly={true}
                         />
                     ))}
 
@@ -219,6 +243,7 @@ function Home() {
                             items={category.toggles}
                             selectedNames={selectedFoodPref[category.name] ?? []}
                             onToggle={(option) => toggleFoodPreference(category.name, option)}
+                            mobileCarouselOnly={true}
                         />
                     ))}
                     <div className="form-actions">

@@ -1,5 +1,5 @@
 
-function RecipeCard ({recipe, onSelect}) {
+function RecipeCard ({recipe}) {
 
     return (
         <article className="recipe-results" key={recipe.recipeID}>
@@ -21,8 +21,22 @@ function RecipeCard ({recipe, onSelect}) {
                 </div>
                 <div className="recipe-tags">
                     Cuisine: <span className="recipe-tag">{recipe.cuisine}</span>
-                    Diet: {recipe.diets.map((diet) => <span className="recipe-tag" key={diet}> {diet}</span>)}
-                    Flavor Profile: {recipe.flavors.map((flavor) => <span className="recipe-tag" key={flavor}> {flavor}</span>)}
+                    Diet:
+                    {recipe.diets?.length > 0 ? (
+                        recipe.diets.map((diet) => (
+                            <span className="recipe-tag" key={diet}> {diet}</span>
+                        ))
+                    ) : (
+                        <span className="recipe-tag"> N/A </span>
+                    )}
+                    Flavor Profile:
+                    {recipe.flavors?.length > 0 ? (
+                        recipe.flavors.map((flavor) => (
+                            <span className="recipe-tag" key={flavor}> {flavor}</span>
+                        ))
+                    ) : (
+                        <span className="recipe-tag"> N/A </span>
+                    )}
                 </div>
             </section>
             <h3>Ingredients:</h3>
